@@ -12,7 +12,7 @@ __email__ = "HLi98@lbl.gov"
 __date__ = "February 2, 2021"
 
 import logging
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 from pymatgen.analysis.structure_matcher import StructureMatcher
@@ -34,7 +34,7 @@ def add_edge_data_from_sc(
     mg: MigrationGraph,
     i_sc: Structure,
     e_sc: Structure,
-    data_array: list,
+    data_array: Union[list, str, int, float],
     key: str = "custom_key",
     use_host_sg: bool = True,
 ) -> None:
@@ -60,7 +60,10 @@ def add_edge_data_from_sc(
     isite, esite = i_wi[0], e_wi[0]
     uhop_index, mh_from_sc = get_unique_hop(mg, i_sc, isite, esite, use_host_sg)
     add_dict = {key: data_array}
-    mg.add_data_to_similar_edges(target_label=uhop_index, data=add_dict, m_hop=mh_from_sc)
+    if isinstance(data_array, list):
+        mg.add_data_to_similar_edges(target_label=uhop_index, data=add_dict, m_hop=mh_from_sc)
+    else:
+        mg.add_data_to_similar_edges(target_label=uhop_index, data=add_dict)
 
 
 def get_uc_pos(
